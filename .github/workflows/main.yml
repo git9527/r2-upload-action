@@ -1,0 +1,31 @@
+name: Build
+
+on: [pull_request, push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - name: Install Dependencies
+        run: pnpm i --frozen-lockfile
+      - name: Build
+        run: pnpm run build
+
+  release:
+    name: Release
+    needs: [build]
+    if: contains(github.ref, 'tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release GitHub Actions
+        uses: technote-space/release-github-actions@v6
+        with:
+          BRANCH_NAME: releases/${MAJOR}
+          CLEAN_TARGETS: '.gitignore,.github,*.lock,*.json'
+          COMMIT_MESSAGE: 'build: release ${{ steps.get_tag.outputs.version }} via ${{ github.sha }}'

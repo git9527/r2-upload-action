@@ -32,7 +32,7 @@ let config: R2Config = {
     secretAccessKey: getInput("r2-secret-access-key", { required: true }),
     bucket: getInput("r2-bucket", { required: true }),
     jurisdiction: getInput("r2-jurisdiction"),
-    sourceDir: getInput("source-dir", { required: true }),
+    globPattern: getInput("glob-pattern") || '**/*',
     destinationDir: getInput("destination-dir"),
     outputFileUrl: getInput("output-file-url") === 'true',
     multiPartSize: parseInt(getInput("multipart-size")) || 100,
@@ -84,21 +84,19 @@ const run = async (config: R2Config) => {
     const urls: FileMap = {};
 
     if (config.keepFileFresh) {
-        const remotePrefix = config.destinationDir !== "" ? config.destinationDir : config.sourceDir;
-        await deleteRemoteFiles(config.bucket, remotePrefix);
+        await deleteRemoteFiles(config.bucket, config.destinationDir);
     }
 
-    const files: FileMap = getFileList(config.sourceDir);
+    const files: FileMap = getFileList(config.globPattern);
 
     for (const file in files) {
-        console.log(config.sourceDir);
         console.log(config.destinationDir);
         //const fileName = file.replace(config.sourceDir, "");
         const fileName = files[file];
         // const fileKey = path.join(config.destinationDir !== "" ? config.destinationDir : config.sourceDir, fileName);
 
-        const destinationDir = config.destinationDir.split(path.sep).join('/');
-        const fileKey = path.posix.join(destinationDir !== "" ? destinationDir : config.sourceDir.split(path.sep).join('/'), fileName.split(path.sep).join('/'));
+        const fileBaseName = path.basename(fileName)
+        const fileKey = path.join(config.destinationDir, fileBaseName).trim()
 
         if (fileName.includes('.gitkeep'))
             continue;

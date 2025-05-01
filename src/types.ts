@@ -4,7 +4,7 @@ export interface R2Config {
     secretAccessKey: string
     bucket: string
     jurisdiction: string
-    sourceDir: string
+    globPattern: string
     destinationDir: string
     outputFileUrl: boolean
     multiPartSize: number

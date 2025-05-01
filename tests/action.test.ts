@@ -1,5 +1,6 @@
 import { RunOptions, RunTarget } from "github-action-ts-run-api";
 import * as dotenv from "dotenv";
+import {getFileList} from "../src/utils";
 
 dotenv.config();
 
@@ -7,6 +8,11 @@ describe("r2-upload-action", () => {
     const target = process.env.CI
         ? RunTarget.mainJs("action.yml")
         : RunTarget.jsFile("dist/index.js", "action.yml");
+
+    it("Should list all files", async() => {
+        const files = getFileList("tests/dir/**/*")
+        expect(files).toEqual(["tests/dir/hello/file.txt"])
+    })
 
     it("Upload test directory to root of R2", async () => {
         const options = RunOptions.create({

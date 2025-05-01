@@ -1,6 +1,6 @@
 import { FileMap } from "./types.js";
 import fs from 'fs';
-import path from 'path';
+import glob from 'glob'
 
 export const formatBytes = (bytes: number) => {
     const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
@@ -18,34 +18,8 @@ export const formatBytes = (bytes: number) => {
     return (bytes / Math.pow(1024, i)).toFixed(2) + " " + sizes[i]
 };
 
-export const getFileList = (dir: string, oldDir?: string) => {
-    let files: FileMap = {};
-    let dirSplit = dir.trim().split("\n");
-
-    for (const singleDir of dirSplit) {
-        const trimmedDir = singleDir.trim();
-
-        if (fs.statSync(trimmedDir).isFile())
-            files[singleDir] = path.basename(trimmedDir);
-        else
-        {
-            const items = fs.readdirSync(trimmedDir, {
-                withFileTypes: true,
-            });
-    
-            for (const item of items) {
-                const isDir = item.isDirectory();
-                const absolutePath = path.join(trimmedDir, item.name);
-                if (isDir) {
-                    files = {...files, ...getFileList(absolutePath, oldDir || trimmedDir)};
-                } else {
-                    files[absolutePath] = path.relative(oldDir || trimmedDir, absolutePath);
-                }
-            }
-        }
-    }
-
-    return files;
+export const getFileList = (globSource: string): FileMap => {
+    return glob.sync(globSource, {}).filter(file => fs.statSync(file).isFile());
 };
 
 export const getFileSizeMB = (file: string) => {
