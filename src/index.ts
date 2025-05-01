@@ -108,7 +108,7 @@ const run = async (config: R2Config) => {
             const fileMB = getFileSizeMB(fileName);
             console.info(`R2 Info - Uploading ${fileName} (${formatFileSize(fileName)}) to ${fileKey}`);
             const upload = fileMB > config.multiPartSize ? uploadMultiPart : putObject;
-            const result = await upload(file, fileKey, config, config.maxTries, config.retryTimeout);
+            const result = await upload(fileName, fileKey, config, config.maxTries, config.retryTimeout);
             map.set(file, result.output);
             urls[file] = result.url;
         } catch (err: unknown) {
