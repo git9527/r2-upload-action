@@ -1,0 +1,63 @@
+name: 'Glob R2 Upload Action'
+description: 'GitHub Action to upload files to a Cloudflare R2 bucket'
+author: 'git9527'
+branding:
+  icon: 'upload-cloud'
+  color: 'white'
+inputs:
+  r2-account-id:
+    description: ''
+    required: true
+  r2-access-key-id:
+    description: ''
+    required: true
+  r2-secret-access-key:
+    description: ''
+    required: true
+  r2-bucket:
+    description: ''
+    required: true
+  r2-jurisdiction:
+    description: ''
+    required: false
+  glob-pattern:
+    description: ''
+    required: true
+  destination-dir:
+    description: ''
+    required: false
+  output-file-url:
+    description: ''
+    default: 'true'
+    required: false
+  multipart-size:
+    description: 'use multipart upload when file size is greater than this value (MB)'
+    default: '100'
+    required: false
+  max-retries:
+    description: 'maximum number of retries'
+    default: '5'
+    required: false
+  retry-timeout:
+    description: 'time to wait between retries'
+    default: '2000'
+    required: false
+  multipart-concurrent:
+    description: 'whether to use concurrent while multipart upload'
+    default: 'true'
+    required: false
+  keep-file-fresh:
+    description: ''
+    default: 'false'
+    required: false
+  custom-charset:
+    description: ''
+    required: false
+outputs:
+  result:
+    description: '`success` or `failure`'
+  file-urls:
+    description: ''
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
