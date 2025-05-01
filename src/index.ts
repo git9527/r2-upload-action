@@ -89,8 +89,9 @@ const run = async (config: R2Config) => {
 
     const files: FileMap = getFileList(config.globPattern);
 
+    console.log("Uploading to:", config.destinationDir);
     for (const file in files) {
-        console.log(config.destinationDir);
+
         //const fileName = file.replace(config.sourceDir, "");
         const fileName = files[file];
         // const fileKey = path.join(config.destinationDir !== "" ? config.destinationDir : config.sourceDir, fileName);
@@ -101,11 +102,11 @@ const run = async (config: R2Config) => {
         if (fileName.includes('.gitkeep'))
             continue;
 
-        console.log(fileKey);
+        console.log("target path:", fileKey);
 
         try {
-            const fileMB = getFileSizeMB(file);
-            console.info(`R2 Info - Uploading ${file} (${formatFileSize(file)}) to ${fileKey}`);
+            const fileMB = getFileSizeMB(fileName);
+            console.info(`R2 Info - Uploading ${fileName} (${formatFileSize(fileName)}) to ${fileKey}`);
             const upload = fileMB > config.multiPartSize ? uploadMultiPart : putObject;
             const result = await upload(file, fileKey, config, config.maxTries, config.retryTimeout);
             map.set(file, result.output);
