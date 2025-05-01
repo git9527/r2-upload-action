@@ -97,7 +97,7 @@ const run = async (config: R2Config) => {
         // const fileKey = path.join(config.destinationDir !== "" ? config.destinationDir : config.sourceDir, fileName);
 
         const fileBaseName = path.basename(fileName)
-        const fileKey = path.join(config.destinationDir, fileBaseName).trim()
+        const fileKey = config.destinationDir + "/" + fileBaseName
 
         if (fileName.includes('.gitkeep'))
             continue;
